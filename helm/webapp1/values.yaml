@@ -17,3 +17,22 @@ ingress:
   enabled: false
 
 resources: {}
+
+probes:
+  startup:
+    enabled: true
+    path: /health
+    periodSeconds: 2
+    failureThreshold: 30
+  readiness:
+    path: /health
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    timeoutSeconds: 2
+    failureThreshold: 6
+  liveness:
+    path: /health
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    timeoutSeconds: 2
+    failureThreshold: 3
