@@ -79,11 +79,11 @@ docker build -t webapp2:v1.0.0 apps/webapp2
 
 ## Kubernetes with Helm
 
-Install charts:
+Install apps into separate namespaces:
 
 ```bash
-helm upgrade --install webapp1 helm/webapp1
-helm upgrade --install webapp2 helm/webapp2
+helm upgrade --install webapp1 helm/webapp1 -n webapp1 --create-namespace
+helm upgrade --install webapp2 helm/webapp2 -n webapp2 --create-namespace
 ```
 
 Current service ports:
@@ -91,24 +91,36 @@ Current service ports:
 - `webapp1`: service `80` -> container `8000`
 - `webapp2`: service `80` -> container `8001`
 
+Cross-namespace service URLs used by the apps:
+
+- `webapp1 -> webapp2`: `http://webapp2.webapp2.svc.cluster.local`
+- `webapp2 -> webapp1`: `http://webapp1.webapp1.svc.cluster.local`
+
 ## Istio
 
 Available manifests:
 
-- `istio/peerauthentications.yaml`: mTLS `STRICT` for namespace `default`
+- `istio/gateway.yaml`: ingress gateway (`apps-gateway`) in namespace `istio-system`
+- `istio/virtualservices.yaml`:
+  - route `/webapp1` to `webapp1.webapp1.svc.cluster.local:80`
+  - route `/webapp2` to `webapp2.webapp2.svc.cluster.local:80`
+- `istio/peerauthentications.yaml`: mTLS `STRICT` in namespaces `webapp1` and `webapp2`
 - `istio/authorizationpolicies.yaml`:
-  - allow `webapp2` SA to call `webapp1` (`/api/v1/users*`, `/health`)
-  - allow `webapp1` SA to call `webapp2` (`/api/v1/items*`, `/health`)
+  - allow `webapp2` SA (`ns/webapp2/sa/webapp2`) to call `webapp1` (`/api/v1/users*`, `/health`)
+  - allow `webapp1` SA (`ns/webapp1/sa/webapp1`) to call `webapp2` (`/api/v1/items*`, `/health`)
+  - allow Istio ingress gateway SA to reach allowed app paths
 
-Apply:
+Install and configure Istio + app mesh:
 
 ```bash
-kubectl apply -f istio/peerauthentications.yaml
-kubectl apply -f istio/authorizationpolicies.yaml
+./istio/install.sh
 ```
 
-`istio/gateway.yaml` and `istio/virtualservices.yaml` are currently empty placeholders.
+What `istio/install.sh` does:
 
-## Notes
-
-- `webapp1` chart currently references `include "webapp1.fullname"` but does not yet define it in a `_helpers.tpl`. Add that helper before templating/installing `webapp1`.
+1. Creates namespaces: `istio-system`, `webapp1`, `webapp2`
+2. Installs Istio control plane
+3. Enables sidecar injection in `webapp1` and `webapp2`
+4. Deploys both apps with Helm into their own namespaces
+5. Applies Gateway, VirtualService, PeerAuthentication, AuthorizationPolicy manifests
+6. Restarts and waits for app deployments

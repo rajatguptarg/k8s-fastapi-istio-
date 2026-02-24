@@ -11,7 +11,7 @@ service:
   targetPort: 8001
 
 env:
-  WEBAPP1_BASE_URL: "http://webapp1.default.svc.cluster.local"
+  WEBAPP1_BASE_URL: "http://webapp1.webapp1.svc.cluster.local"
 
 ingress:
   enabled: false

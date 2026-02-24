@@ -1,8 +1,17 @@
 apiVersion: security.istio.io/v1beta1
 kind: PeerAuthentication
 metadata:
-  name: apps-mtls
-  namespace: default
+  name: webapp1-mtls
+  namespace: webapp1
+spec:
+  mtls:
+    mode: STRICT
+---
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: webapp2-mtls
+  namespace: webapp2
 spec:
   mtls:
     mode: STRICT

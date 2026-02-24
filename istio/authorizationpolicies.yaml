@@ -2,7 +2,7 @@ apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
   name: webapp1-authz
-  namespace: default
+  namespace: webapp1
 spec:
   selector:
     matchLabels:
@@ -10,7 +10,10 @@ spec:
   rules:
     - from:
         - source:
-            principals: ["cluster.local/ns/default/sa/webapp2"]
+            principals:
+              - "cluster.local/ns/webapp2/sa/webapp2"
+              - "cluster.local/ns/istio-system/sa/istio-ingressgateway"
+              - "cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account"
       to:
         - operation:
             methods: ["GET", "POST"]
@@ -21,7 +24,7 @@ apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
   name: webapp2-authz
-  namespace: default
+  namespace: webapp2
 spec:
   selector:
     matchLabels:
@@ -29,7 +32,10 @@ spec:
   rules:
     - from:
         - source:
-            principals: ["cluster.local/ns/default/sa/webapp1"]
+            principals:
+              - "cluster.local/ns/webapp1/sa/webapp1"
+              - "cluster.local/ns/istio-system/sa/istio-ingressgateway"
+              - "cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account"
       to:
         - operation:
             methods: ["GET", "POST"]
