@@ -1,0 +1,14 @@
+[project]
+name = "webapp2"
+version = "1.0.0"
+description = "WebApp2 FastAPI service"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.115.0",
+  "uvicorn[standard]>=0.30.0",
+  "httpx>=0.26.0",
+  "pydantic-settings>=2.0.0",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["app", "."]
