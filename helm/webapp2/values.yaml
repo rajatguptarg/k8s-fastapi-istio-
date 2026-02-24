@@ -1,0 +1,19 @@
+replicaCount: 2
+
+image:
+  repository: webapp2
+  tag: "v1.0.0"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8001
+
+env:
+  WEBAPP1_BASE_URL: "http://webapp1.default.svc.cluster.local"
+
+ingress:
+  enabled: false
+
+resources: {}

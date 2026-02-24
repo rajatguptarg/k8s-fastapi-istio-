@@ -1,0 +1,36 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: webapp1-authz
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: webapp1
+  rules:
+    - from:
+        - source:
+            principals: ["cluster.local/ns/default/sa/webapp2"]
+      to:
+        - operation:
+            methods: ["GET", "POST"]
+            paths: ["/api/v1/users*", "/health"]
+
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: webapp2-authz
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: webapp2
+  rules:
+    - from:
+        - source:
+            principals: ["cluster.local/ns/default/sa/webapp1"]
+      to:
+        - operation:
+            methods: ["GET", "POST"]
+            paths: ["/api/v1/items*", "/health"]
