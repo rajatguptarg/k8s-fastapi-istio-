@@ -12,12 +12,19 @@ spec:
         - source:
             principals:
               - "cluster.local/ns/webapp2/sa/webapp2"
+      to:
+        - operation:
+            methods: ["GET", "POST"]
+            paths: ["/api/v1/users*", "/health"]
+    - from:
+        - source:
+            principals:
               - "cluster.local/ns/istio-system/sa/istio-ingressgateway"
               - "cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account"
       to:
         - operation:
             methods: ["GET", "POST"]
-            paths: ["/api/v1/users*", "/health"]
+            paths: ["/", "/api/v1/users*", "/health"]
 
 ---
 apiVersion: security.istio.io/v1beta1
@@ -34,9 +41,16 @@ spec:
         - source:
             principals:
               - "cluster.local/ns/webapp1/sa/webapp1"
+      to:
+        - operation:
+            methods: ["GET", "POST"]
+            paths: ["/api/v1/items*", "/health"]
+    - from:
+        - source:
+            principals:
               - "cluster.local/ns/istio-system/sa/istio-ingressgateway"
               - "cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account"
       to:
         - operation:
             methods: ["GET", "POST"]
-            paths: ["/api/v1/items*", "/health"]
+            paths: ["/", "/api/v1/items*", "/health"]

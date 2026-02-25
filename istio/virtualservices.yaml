@@ -11,7 +11,9 @@ spec:
   http:
     - match:
         - uri:
-            prefix: /webapp1
+            exact: /webapp1
+        - uri:
+            prefix: /webapp1/
       rewrite:
         uri: /
       route:
@@ -33,7 +35,9 @@ spec:
   http:
     - match:
         - uri:
-            prefix: /webapp2
+            exact: /webapp2
+        - uri:
+            prefix: /webapp2/
       rewrite:
         uri: /
       route:

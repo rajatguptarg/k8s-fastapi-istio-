@@ -31,6 +31,7 @@ async def create_user(user_in: UserCreate, service: ServiceDep):
 
 @router.get("/call-webapp2")
 async def call_webapp2(settings: SettingsDep):
-    async with httpx.AsyncClient() as client:
-        resp = await client.get(f"{settings.webapp2_base_url}/api/v1/items")
+    async with httpx.AsyncClient(follow_redirects=True) as client:
+        resp = await client.get(f"{settings.webapp2_base_url}/api/v1/items/")
+        resp.raise_for_status()
         return {"from": "webapp1", "webapp2_response": resp.json()}
