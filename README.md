@@ -68,6 +68,43 @@ Cross-service calls (for local runs, set base URLs if needed in `.env`):
 - `webapp1 -> webapp2`: `GET /api/v1/users/call-webapp2`
 - `webapp2 -> webapp1`: `GET /api/v1/items/call-webapp1`
 
+## Testing
+
+Each app includes:
+
+- unit tests for service layer logic
+- integration tests for API endpoints (including cross-service route handlers with mocked outbound HTTP)
+
+Run all tests:
+
+```bash
+cd apps/webapp1
+uv run --active pytest -q
+
+cd ../webapp2
+uv run --active pytest -q
+```
+
+Run only unit tests:
+
+```bash
+cd apps/webapp1
+uv run --active pytest -q tests/unit
+
+cd ../webapp2
+uv run --active pytest -q tests/unit
+```
+
+Run only integration (API) tests:
+
+```bash
+cd apps/webapp1
+uv run --active pytest -q tests/api/v1
+
+cd ../webapp2
+uv run --active pytest -q tests/api/v1
+```
+
 ## Docker
 
 Build images:
